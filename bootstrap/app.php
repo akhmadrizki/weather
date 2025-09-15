@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -32,6 +34,6 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSingletons([
-        \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class,
+        Illuminate\Contracts\Debug\ExceptionHandler::class => App\Exceptions\Handler::class,
     ])
     ->create();
