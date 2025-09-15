@@ -21,7 +21,7 @@ final class AuthController extends Controller
         $user = User::create([
             'name' => $request->string('name'),
             'email' => $request->string('email'),
-            'password' => Hash::make($request->string('password')),
+            'password' => Hash::make($request->string('password')->toString()),
         ]);
 
         SendWelcomeEmailJob::dispatch($user);
@@ -34,7 +34,7 @@ final class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email', $request->string('email'))->first();
-        if (! $user || ! Hash::check($request->string('password'), $user->password)) {
+        if (! $user || ! Hash::check($request->string('password')->toString(), $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
