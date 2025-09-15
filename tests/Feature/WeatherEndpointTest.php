@@ -24,6 +24,6 @@ final class WeatherEndpointTest extends TestCase
 
         Cache::flush();
         $response = $this->getJson('/api/v1/weather');
-        $response->assertOk()->assertJsonPath('location.name', 'Perth');
+        $response->assertOk()->assertJsonPath('data.location.name', 'Perth');
     }
 }
