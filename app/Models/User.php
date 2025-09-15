@@ -47,6 +47,11 @@ final class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function getCountPostsAttribute(): int
+    {
+        return $this->posts()->count();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
