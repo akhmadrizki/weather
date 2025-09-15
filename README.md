@@ -9,6 +9,7 @@
 -   [Database setup](#database-setup)
 -   [How To Try](#test)
 -   [Package Usage](#this-project-using)
+-   [API Documentation](https://e1yjsbmekf.apidog.io/)
 
 ## Prerequisites
 
@@ -87,6 +88,13 @@ Because this project has a weather API, which will be updated regularly every ho
 ```sh
 php artisan schedule:test
 ```
+
+This project is using [weatherapi.com](https://www.weatherapi.com/)
+the deffault I already input the credential key
+
+Then for the city weather forecast options
+the default is `Perth`
+if you want to change another city, you can input the city name on `.env` file `WEATHER_DEFAULT_CITY=CityName`
 
 ## This Project Using
 

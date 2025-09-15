@@ -39,6 +39,7 @@ return [
 
     'weather' => [
         'api_key' => env('WEATHER_API_KEY', '61eea620d4304242ada134404251509'),
+        'default_city' => env('WEATHER_DEFAULT_CITY', 'Perth'),
     ],
 
 ];

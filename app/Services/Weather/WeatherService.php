@@ -30,7 +30,7 @@ final class WeatherService
             $url = 'https://api.weatherapi.com/v1/current.json';
             $response = Http::timeout(5)->get($url, [
                 'key' => $apiKey,
-                'q' => 'Perth',
+                'q' => config('services.weather.default_city', 'Perth'),
                 'aqi' => 'no',
             ]);
 
