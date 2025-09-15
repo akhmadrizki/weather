@@ -9,21 +9,27 @@ use App\Http\Controllers\Weather\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum');
+});
 
 // Users
-Route::get('/users/{user}', [UserController::class, 'show']);
-Route::get('/users', [UserController::class, 'index']);
+Route::controller(UserController::class)->group(function () {
+    Route::get('/users/{user}', 'show');
+    Route::get('/users', 'index');
+});
 
 // Posts (protected except index/show?) requirement says list all posts open. We'll allow public read, auth required for modify
-Route::get('/posts', [PostController::class, 'index']);
-Route::get('/posts/{post}', [PostController::class, 'show']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/posts', [PostController::class, 'store']);
-    Route::patch('/posts/{post}', [PostController::class, 'update']);
-    Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+Route::controller(PostController::class)->group(function () {
+    Route::get('/posts', 'index');
+    Route::get('/posts/{post}', 'show');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/posts', 'store');
+        Route::patch('/posts/{post}', 'update');
+        Route::delete('/posts/{post}', 'destroy');
+    });
 });
 
 // Weather
