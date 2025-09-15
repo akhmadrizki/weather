@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exceptions\Concerns;
 
+use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -16,9 +19,7 @@ trait ExceptionFormatter
     /**
      * Convert an authentication exception into a JSON response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Illuminate\Auth\AuthenticationException $exception
-     * @return \Illuminate\Http\JsonResponse
+     * @param  \Illuminate\Http\Request  $request
      */
     protected function unauthenticated($request, AuthenticationException $exception): JsonResponse
     {
@@ -38,10 +39,10 @@ trait ExceptionFormatter
 
         return response()->json([
             'error' => [
-                'code'    => Response::HTTP_UNAUTHORIZED,
-                'title'   => $title,
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'title' => $title,
                 'message' => $exception->getMessage(),
-                'errors'  => [],
+                'errors' => [],
             ],
         ], Response::HTTP_UNAUTHORIZED);
     }
@@ -49,8 +50,7 @@ trait ExceptionFormatter
     /**
      * Convert a validation exception into a JSON response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  \Illuminate\Http\Request  $request
      */
     protected function invalidJson($request, ValidationException $exception): JsonResponse
     {
@@ -61,20 +61,20 @@ trait ExceptionFormatter
         $errors = [];
 
         foreach ($exception->errors() as $key => $message) {
-            $errorMessage = is_array($message) && !empty($message) ? $message[0] : 'Validation error';
+            $errorMessage = is_array($message) && ! empty($message) ? $message[0] : 'Validation error';
 
             $errors[] = [
-                'key'     => $key,
+                'key' => $key,
                 'message' => $errorMessage,
             ];
         }
 
         return response()->json([
             'error' => [
-                'code'    => (int) $exception->status,
-                'title'   => $this->mapErrorTitle($exception->status),
+                'code' => (int) $exception->status,
+                'title' => $this->mapErrorTitle($exception->status),
                 'message' => $exception->getMessage(),
-                'errors'  => $errors,
+                'errors' => $errors,
             ],
         ], $exception->status);
     }
@@ -82,9 +82,8 @@ trait ExceptionFormatter
     /**
      * Prepare a JSON response for the given exception.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Throwable|\Exception|\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface  $e
-     * @return \Illuminate\Http\JsonResponse
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Throwable|Exception|HttpExceptionInterface  $e
      */
     protected function prepareJsonResponse($request, Throwable $e): JsonResponse
     {
@@ -100,10 +99,10 @@ trait ExceptionFormatter
 
         $errorsArray = [
             'error' => [
-                'code'    => $status,
-                'title'   => $this->mapErrorTitle($status),
+                'code' => $status,
+                'title' => $this->mapErrorTitle($status),
                 'message' => $this->generateErrorMessage($e),
-                'errors'  => [],
+                'errors' => [],
             ],
         ];
 
@@ -121,8 +120,6 @@ trait ExceptionFormatter
 
     /**
      * Map Error Exception Title
-     *
-     * @return string
      */
     protected function mapErrorTitle(int $status): string
     {
@@ -174,8 +171,8 @@ trait ExceptionFormatter
      * Format a ModelNotFoundException into a user-friendly error message
      *
      * @template TModel of \Illuminate\Database\Eloquent\Model
-     * @param \Illuminate\Database\Eloquent\ModelNotFoundException<TModel> $exception
-     * @return string
+     *
+     * @param  ModelNotFoundException<TModel>  $exception
      */
     protected function modelNotFoundMessage(ModelNotFoundException $exception): string
     {
@@ -191,30 +188,14 @@ trait ExceptionFormatter
     }
 
     /**
-     * Extract the model name from a fully qualified class name
-     *
-     * @param string $modelClass
-     * @return string
-     */
-    private function getModelName(string $modelClass): string
-    {
-        // Get the class name without namespace
-        $className = class_basename($modelClass);
-
-        // Convert to snake case and replace underscores with spaces
-        return Str::lower(Str::snake($className, ' '));
-    }
-
-    /**
      * Determine if response need to use Timedoor format
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
     protected function shouldCustomFormat($request): bool
     {
         foreach ($this->urlPathPattern() as $pattern) {
-            if (preg_match('#^' . $pattern . '\z#u', $request->decodedPath()) === 1) {
+            if (preg_match('#^'.$pattern.'\z#u', $request->decodedPath()) === 1) {
                 return true;
             }
         }
@@ -239,11 +220,22 @@ trait ExceptionFormatter
     /**
      * Determine if the exception handler response should be JSON.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return bool
+     * @param  \Illuminate\Http\Request  $request
      */
     protected function shouldReturnJson($request, Throwable $e): bool
     {
         return $request->expectsJson() || $this->shouldCustomFormat($request);
+    }
+
+    /**
+     * Extract the model name from a fully qualified class name
+     */
+    private function getModelName(string $modelClass): string
+    {
+        // Get the class name without namespace
+        $className = class_basename($modelClass);
+
+        // Convert to snake case and replace underscores with spaces
+        return Str::lower(Str::snake($className, ' '));
     }
 }
