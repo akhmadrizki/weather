@@ -7,35 +7,20 @@ namespace App\Http\Controllers\Post;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
+use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
 
 final class PostController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): ResourceCollection
     {
-        $paginator = Post::with('user')->latest()->paginate($request->integer('per_page', 10));
+        $posts = Post::with('user')->latest()->paginate($request->integer('per_page', 10));
 
-        return response()->json([
-            'data' => $paginator->items(),
-            'links' => [
-                'first' => $paginator->url(1),
-                'last' => $paginator->url($paginator->lastPage()),
-                'prev' => $paginator->previousPageUrl(),
-                'next' => $paginator->nextPageUrl(),
-            ],
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'from' => $paginator->firstItem(),
-                'last_page' => $paginator->lastPage(),
-                'path' => $paginator->path(),
-                'per_page' => $paginator->perPage(),
-                'to' => $paginator->lastItem(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return PostResource::collection($posts);
     }
 
     public function show(Post $post): JsonResponse
@@ -50,7 +35,7 @@ final class PostController extends Controller
         $post = Post::create([
             'title' => $request->string('title'),
             'body' => $request->string('body'),
-            'user_id' => $request->user()->id,
+            'user_id' => $request->user()?->id,
         ]);
 
         return response()->json($post, 201);
