@@ -90,11 +90,17 @@ php artisan schedule:test
 ```
 
 This project is using [weatherapi.com](https://www.weatherapi.com/)
-the deffault I already input the credential key
+the default I already input the credential key
 
 Then for the city weather forecast options
 the default is `Perth`
 if you want to change another city, you can input the city name on `.env` file `WEATHER_DEFAULT_CITY=CityName`
+
+This project also using PHPUnit for testing, if you want to run the test, you can run the command below.
+
+```sh
+php artisan test
+```
 
 ## This Project Using
 
